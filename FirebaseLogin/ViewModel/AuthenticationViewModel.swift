@@ -41,11 +41,11 @@ struct LoginViewModel: AuthenticationViewModel {
     }
     
     var buttonTitleColor: UIColor {
-        return formIsValid ? .white : UIColor(white: 1, alpha: 0.67)
+        return formIsValid ? #colorLiteral(red: 0.2745098039, green: 0.5058823529, blue: 0.537254902, alpha: 1) : #colorLiteral(red: 0.4666666667, green: 0.6745098039, blue: 0.6352941176, alpha: 1)
     }
     
     var buttonBackgroundColor: UIColor {
-        return formIsValid ? #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1) : #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1).withAlphaComponent(0.5)
+        return formIsValid ? #colorLiteral(red: 0.9568627451, green: 0.9137254902, blue: 0.8039215686, alpha: 1) : #colorLiteral(red: 0.9568627451, green: 0.9137254902, blue: 0.8039215686, alpha: 1).withAlphaComponent(0.5)
     }
     
 }
@@ -67,11 +67,11 @@ struct RegistrationViewModel: AuthenticationViewModel{
     }
     
     var buttonTitleColor: UIColor{
-        return formIsValid ? .white : UIColor(white: 1, alpha: 0.67)
+        return formIsValid ? #colorLiteral(red: 0.2745098039, green: 0.5058823529, blue: 0.537254902, alpha: 1) : #colorLiteral(red: 0.4666666667, green: 0.6745098039, blue: 0.6352941176, alpha: 1)
     }
     
     var buttonBackgroundColor: UIColor {
-        return formIsValid ? #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1) : #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1).withAlphaComponent(0.5)
+        return formIsValid ? #colorLiteral(red: 0.9568627451, green: 0.9137254902, blue: 0.8039215686, alpha: 1) : #colorLiteral(red: 0.9568627451, green: 0.9137254902, blue: 0.8039215686, alpha: 1).withAlphaComponent(0.5)
     }
     
     
@@ -90,11 +90,11 @@ struct ResetPasswordViewModel: AuthenticationViewModel{
     }
     
     var buttonTitleColor: UIColor{
-        return formIsValid ? .white : UIColor(white: 1, alpha: 0.67)
+        return formIsValid ? #colorLiteral(red: 0.2745098039, green: 0.5058823529, blue: 0.537254902, alpha: 1) : #colorLiteral(red: 0.4666666667, green: 0.6745098039, blue: 0.6352941176, alpha: 1)
     }
     
     var buttonBackgroundColor: UIColor {
-        return formIsValid ? #colorLiteral(red: 0.3647058904, green: 0.06666667014, blue: 0.9686274529, alpha: 1) : #colorLiteral(red: 0.5568627715, green: 0.3529411852, blue: 0.9686274529, alpha: 1).withAlphaComponent(0.5)
+        return formIsValid ? #colorLiteral(red: 0.9568627451, green: 0.9137254902, blue: 0.8039215686, alpha: 1) : #colorLiteral(red: 0.9568627451, green: 0.9137254902, blue: 0.8039215686, alpha: 1).withAlphaComponent(0.5)
     }
     
     

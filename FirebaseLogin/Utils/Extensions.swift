@@ -7,7 +7,7 @@
 //
 
 import UIKit
-
+import JGProgressHUD
 
 extension UIView {
     func anchor(top: NSLayoutYAxisAnchor? = nil,
@@ -97,33 +97,33 @@ extension UIView {
 }
 
 extension UIViewController {
+    
+    static let hud = JGProgressHUD(style: .dark)
 
     func configureGradientBackground() {
         let gradient = CAGradientLayer()
-        gradient.colors = [UIColor.systemPurple.cgColor,
-                           UIColor.systemBlue.cgColor]
+        gradient.colors = [#colorLiteral(red: 1, green: 0.8470588235, blue: 0.6078431373, alpha: 1).cgColor,
+                           #colorLiteral(red: 0.09803921569, green: 0.3294117647, blue: 0.4823529412, alpha: 1).cgColor]
         gradient.locations = [0, 1]
         /// Because gradient is a Layer, not a view
         view.layer.addSublayer(gradient)
         gradient.frame = view.frame
     }
     
+    func showLoader(_ show: Bool) {
+        view.endEditing(true)
 
-//
-//    func showLoader(_ show: Bool) {
-//        view.endEditing(true)
-//
-//        if show {
-//            UIViewController.hud.show(in: view)
-//        } else {
-//            UIViewController.hud.dismiss()
-//        }
-//    }
-//
-//    func showMessage(withTitle title: String, message: String) {
-//        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
-//        present(alert, animated: true, completion: nil)
-//    }
+        if show {
+            UIViewController.hud.show(in: view)
+        } else {
+            UIViewController.hud.dismiss()
+        }
+    }
+
+    func showMessage(withTitle title: String, message: String) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Ok", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
 }
 

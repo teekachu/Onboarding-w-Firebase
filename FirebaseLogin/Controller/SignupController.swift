@@ -12,6 +12,10 @@ import FirebaseDatabase
 class SignupController : UIViewController {
     
     // MARK: - Properties
+    
+    /// Protocol is initialized in LoginController, so do not need to recreate another protocol.
+    weak var delegate: AuthenticationDelegate?
+    
     private var viewmodel = RegistrationViewModel()
     
     private let logoImage = UIImageView(image: #imageLiteral(resourceName: "firebase-logo"))
@@ -62,48 +66,39 @@ class SignupController : UIViewController {
         guard let passwordtf = passwordTextfield.text else {return}
         guard let fullnametf = fullnameTextfield.text else {return}
         
+        showLoader(true)
         
-        /// create user
-        Service.registerUserWithFirebase(email: emailtf, password: passwordtf, fullname: fullnametf, hasSeenOnboardingPage: false) { (error, ref) in
+        /// create user in Realtime database
+        Service.registerUserWithFirebase(email: emailtf, password: passwordtf, fullname: fullnametf, hasSeenOnboardingPage: false) {[weak self] (error, ref) in
+            
+            self?.showLoader(false)
             
             /// Save in database
             if let error = error {
-                print("DEBUG: Error occured during storing user info in database: \(error.localizedDescription)")
+                self?.showMessage(withTitle: "Error", message: error.localizedDescription)
+                //                print("DEBUG: Error occured during storing user info in database: \(error.localizedDescription)")
                 return
             }
             
             /// success
             print("Debug: Successfully reated user and updated userinfo")
-            self.dismiss(animated: true, completion: nil)
             
+            /// After successfully logging in, we want to conform to the protocol of  AuthenticationDelegate
+            /// And basically fetch the new user's information
+            self?.delegate?.authenticationComplete()
+            
+            //            self.dismiss(animated: true, completion: nil)
         }
-
         
-        //        Auth.auth().createUser(withEmail: emailtf, password: passwordtf) { (result, error) in
+        /// create user in Firestore
+        //        Service.registerUserWithFirestore(email: emailtf, password: passwordtf, fullname: fullnametf, hasSeenOnboardingPage: false) {[weak self] (error) in
         //            if let error = error {
-        //                print("DEBUG: Error occured during creating user: \(error.localizedDescription)")
+        //                self?.showMessage(withTitle: "Error.", message: error.localizedDescription)
         //                return
         //            }
-        //            /// To save result in database. First set the unique identifier to the uid created by firebase for user.
-        //            guard let uid = result?.user.uid else {return}
         //
-        //            /// create data dictionary / data structure. Don't need to save the pswd.
-        //            let structure = [
-        //                "email": emailtf,
-        //                "fullname": fullnametf
-        //            ]
+        //            self?.delegate?.authenticationComplete()
         //
-        //            /// Save in database
-        //            Database.database().reference().child("Users").child(uid).updateChildValues(structure) { (error, ref) in
-        //
-        //                if let error = error {
-        //                    print("DEBUG: Error occured during storing user info in database: \(error.localizedDescription)")
-        //                    return
-        //                }
-        //
-        //                /// success
-        //                print("Created user and updated userinfo")
-        //            }
         //        }
     }
     

@@ -7,9 +7,14 @@
 
 import UIKit
 
+protocol ResetPasswordViewControllerDelegate: class{
+    func didSendResetPasswordLink()
+}
+
 class ResetPasswordViewController: UIViewController {
     
     // MARK: - Properties
+    weak var delegate: ResetPasswordViewControllerDelegate?
     
     private var viewModel = ResetPasswordViewModel()
     
@@ -17,12 +22,14 @@ class ResetPasswordViewController: UIViewController {
     
     private var stackview = UIStackView()
     
-    private let emailTextField = CustomTextfield(for: "email")
+    private var emailTextField = CustomTextfield(for: "email")
+    
+    var email: String?
     
     private var resetLinkButton: AuthButton = {
         let authButton = AuthButton(type: .system)
         authButton.title = "Send Reset Link"
-        authButton.addTarget(self, action: #selector(handleResetLink), for: .touchUpInside)
+        authButton.addTarget(self, action: #selector(handleResetButton), for: .touchUpInside)
         return authButton
     }()
     
@@ -42,6 +49,7 @@ class ResetPasswordViewController: UIViewController {
         configureImage()
         configureStackView()
         configureLogin()
+        loadEmail()
         
         /// configure view model
         notificationObservers()
@@ -49,8 +57,25 @@ class ResetPasswordViewController: UIViewController {
     
     
     // MARK: Selectors
-    @objc func handleResetLink(){
-        print("Debug: handle reset Link")
+    @objc func handleResetButton(){
+//        print("Debug: handle reset Link")
+        showLoader(true)
+        guard let email = viewModel.email else{return}
+        
+        Service.resetPassword(for: email) {[weak self] (error) in
+            
+            if let error = error{
+//                print("DEBUG: Failed to handle reset password, \(error.localizedDescription)")
+                self?.showMessage(withTitle: "Error", message: error.localizedDescription)
+                self?.showLoader(false)
+                return
+            }
+            /// go back to the login page with some messages saying the email has been sent for user feedback
+            
+            self?.showLoader(false)
+            self?.delegate?.didSendResetPasswordLink()
+        }
+        
     }
     
     @objc func didTapToReturn(){
@@ -108,6 +133,13 @@ class ResetPasswordViewController: UIViewController {
         loginButton.centerX(inView: view)
         loginButton.anchor(
             bottom: view.safeAreaLayoutGuide.bottomAnchor)
+    }
+    
+    private func loadEmail(){
+        guard let email = email else {return}
+        emailTextField.text = email /// copy over the email from loginVC to this VC
+        viewModel.email = email /// logic for updating the active button based on viewModel
+        updateForm() /// actually activate the button
     }
     
 }

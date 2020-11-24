@@ -9,9 +9,17 @@ import UIKit
 import FirebaseAuth
 import GoogleSignIn
 
+/// This protocol is to fix the bug of fetching the new user after a previous user has logged out.
+/// And show the new user's fullname in the welcome label
+protocol AuthenticationDelegate: class{
+    func authenticationComplete()
+}
+
 class LoginController: UIViewController {
     
     // MARK: - Properties
+    
+    weak var delegate: AuthenticationDelegate?
     
     private var viewmodel = LoginViewModel()
     
@@ -87,18 +95,30 @@ class LoginController: UIViewController {
         guard let email = emailTextField.text else{return}
         guard let password = passwordTextfield.text else{return}
         
+        showLoader(true)
+        
         Service.logUserIn(email: email, password: password) {[weak self] (result, error) in
+            self?.showLoader(false)
             if let error = error{
-                print("Debug: error signing in, \(error.localizedDescription)")
+                self?.showLoader(false)
+                self?.showMessage(withTitle: "Error", message: error.localizedDescription)
+//                print("Debug: error signing in, \(error.localizedDescription)")
                 return
             }
             print("Debug: success logging in")
-            self?.dismiss(animated: true, completion: nil)
+            
+            
+            /// After successfully logging in, we want to conform to the protocol of  AuthenticationDelegate
+            /// And basically fetch the new user's information
+            self?.delegate?.authenticationComplete()
+            //            self?.dismiss(animated: true, completion: nil)
         }
     }
     
     @objc func handleForgotPassword(){
         let rvc = ResetPasswordViewController()
+        rvc.email = emailTextField.text
+        rvc.delegate = self
         navigationController?.pushViewController(rvc, animated: true)
     }
     
@@ -109,6 +129,8 @@ class LoginController: UIViewController {
     
     @objc func handleSignUp(){
         let vc = SignupController()
+        /// set delegate as  delegate for the AuthenticationDelegate
+        vc.delegate = delegate
         navigationController?.pushViewController(vc, animated: true)
     }
     
@@ -208,11 +230,28 @@ extension LoginController: GIDSignInDelegate{
         
         Service.signInWithGoogle(didSignInFor: user) {[weak self] (error, ref) in
             if let error = error {
-                print("Debug: error during google credential sign in. \(error.localizedDescription)")
+                self?.showMessage(withTitle: "Error", message: error.localizedDescription)
+//                print("Debug: error during google credential sign in. \(error.localizedDescription)")
             }
             
             print("Debug: successfully handled google sign in ")
-            self?.dismiss(animated: true, completion: nil)
+            
+            /// After successfully logging in, we want to conform to the protocol of  AuthenticationDelegate
+            /// And basically fetch the new user's information
+            self?.delegate?.authenticationComplete()
+            
+            //            self?.dismiss(animated: true, completion: nil)
         }
     }
+}
+
+extension LoginController: ResetPasswordViewControllerDelegate {
+    func didSendResetPasswordLink() {
+//        print("Debug: did send reset password link. show success message")
+        navigationController?.popViewController(animated: true)
+        showMessage(withTitle: messagesBody.successNotification ,
+                    message: messagesBody.successnotificationDetail)
+    }
+    
+    
 }

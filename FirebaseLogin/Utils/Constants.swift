@@ -19,6 +19,9 @@ struct messagesBody {
     static let msgNotification = "Get Notified"
     static let notificationDetail = "Stuff about getting Notified"
     
+    static let successNotification = "Success!"
+    static let successnotificationDetail = "We have sent an email to the email address provided, please follow instructions to retrive your password. "
+    
 }
 
 let DB_REF = Database.database().reference()
